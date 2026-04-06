@@ -1,0 +1,46 @@
+name: Daily Ghostfolio Interest Payment
+
+on:
+  schedule:
+    # Runs every day at 08:00 UTC — adjust to your preference
+    - cron: '0 8 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  post-interest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get today's date
+        id: date
+        run: echo "TODAY=$(date -u +%Y-%m-%dT00:00:00.000Z)" >> $GITHUB_OUTPUT
+
+      - name: Authenticate with Ghostfolio
+        id: auth
+        run: |
+          TOKEN=$(curl -s -X POST "${{ secrets.GHOSTFOLIO_URL }}/api/v1/auth/anonymous" \
+            -H "Content-Type: application/json" \
+            -d '{"accessToken": "${{ secrets.GHOSTFOLIO_ACCESS_TOKEN }}"}' \
+            | jq -r '.authToken')
+          echo "TOKEN=$TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Post interest activity
+        run: |
+          curl -s -X POST "${{ secrets.GHOSTFOLIO_URL }}/api/v1/import" \
+            -H "Authorization: Bearer ${{ steps.auth.outputs.TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "activities": [
+                {
+                  "currency": "GBP",
+                  "dataSource": "MANUAL",
+                  "date": "${{ steps.date.outputs.TODAY }}",
+                  "fee": 0,
+                  "quantity": 1,
+                  "symbol": "INTEREST",
+                  "type": "INTEREST",
+                  "unitPrice": 1.00,
+                  "comment": "Daily interest payment"
+                }
+              ]
+            }'
