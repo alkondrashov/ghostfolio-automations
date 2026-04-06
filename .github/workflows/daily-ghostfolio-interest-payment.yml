@@ -37,6 +37,7 @@ jobs:
           print(round(balance * daily_rate, 2))
           ")
           echo "AMOUNT=$AMOUNT" >> $GITHUB_OUTPUT
+          echo "BALANCE=$BALANCE" >> $GITHUB_OUTPUT
 
       - name: Post interest activity
         run: |
@@ -59,3 +60,18 @@ jobs:
                 }
               ]
             }'
+
+      - name: Update account cash balance
+        run: |
+          NEW_BALANCE=$(python3 -c "print(round(${{ steps.interest.outputs.BALANCE }} + ${{ steps.interest.outputs.AMOUNT }}, 2))")
+          curl -s -X PUT "https://ghostfol.io/api/v1/account/13993c80-84eb-4d6d-b42f-778410f5d92d" \
+            -H "Authorization: Bearer ${{ steps.auth.outputs.TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"id\": \"13993c80-84eb-4d6d-b42f-778410f5d92d\",
+              \"balance\": $NEW_BALANCE,
+              \"currency\": \"USD\",
+              \"isExcluded\": false,
+              \"name\": \"Cash Revolut\",
+              \"platformId\": \"747b9016-8ba1-4d13-8255-aec49a468ead\"
+            }"
