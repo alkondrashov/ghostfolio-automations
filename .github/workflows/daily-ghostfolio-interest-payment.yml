@@ -1,4 +1,4 @@
-name: Daily Ghostfolio Interest Payment
+name: Revolut Daily Interest Import
 
 on:
   schedule:
@@ -24,6 +24,20 @@ jobs:
             | jq -r '.authToken')
           echo "TOKEN=$TOKEN" >> $GITHUB_OUTPUT
 
+      - name: Get account balance and calculate daily interest
+        id: interest
+        run: |
+          BALANCE=$(curl -s "https://ghostfol.io/api/v1/account" \
+            -H "Authorization: Bearer ${{ steps.auth.outputs.TOKEN }}" \
+            | jq -r '.accounts[] | select(.id == "13993c80-84eb-4d6d-b42f-778410f5d92d") | .balance')
+          AMOUNT=$(python3 -c "
+          balance = float('$BALANCE')
+          aer = 0.0123
+          daily_rate = (1 + aer) ** (1 / 365) - 1
+          print(round(balance * daily_rate, 6))
+          ")
+          echo "AMOUNT=$AMOUNT" >> $GITHUB_OUTPUT
+
       - name: Post interest activity
         run: |
           curl -s -X POST "https://ghostfol.io/api/v1/import" \
@@ -37,11 +51,11 @@ jobs:
                   "date": "${{ steps.date.outputs.TODAY }}",
                   "fee": 0,
                   "quantity": 1,
-                  "symbol": "INTEREST",
+                  "symbol": "Interest paid",
                   "type": "INTEREST",
-                  "unitPrice": 1.00,
+                  "unitPrice": ${{ steps.interest.outputs.AMOUNT }},
                   "accountId": "13993c80-84eb-4d6d-b42f-778410f5d92d",
-                  "comment": "Daily interest payment"
+                  "comment": ""
                 }
               ]
             }'
