@@ -47,7 +47,7 @@ jobs:
             -d '{
               "activities": [
                 {
-                  "currency": "GBP",
+                  "currency": "USD",
                   "dataSource": "MANUAL",
                   "date": "${{ steps.date.outputs.TODAY }}",
                   "fee": 0,
