@@ -24,7 +24,7 @@ The access token is read from the `GHOSTFOLIO_ACCESS_TOKEN` environment variable
 ## Known Accounts
 
 - **Vanguard Stocks & Shares ISA**: `be08db84-cbaf-4e99-ac40-87ce96992ec7`
-- **Default account** (used for interest payments): `13993c80-84eb-4d6d-b42f-778410f5d92d`
+- **Cash Revolut** (Investec savings, used for interest payments): `13993c80-84eb-4d6d-b42f-778410f5d92d` — currency: USD
 
 ## Key Endpoints
 
@@ -36,6 +36,8 @@ curl -s "https://ghostfol.io/api/v1/order?accounts=<accountId>&type=<TYPE>" \
 Omit `type` to get all activity types. Supported types: `BUY`, `SELL`, `FEE`, `INTEREST`, `DIVIDEND`, `LIABILITY`.
 
 ### Create activity (import)
+> **Bulk import limit**: The `/api/v1/import` endpoint accepts a maximum of **25 activities per request**. Split larger imports into batches.
+
 ```bash
 curl -s -X POST "https://ghostfol.io/api/v1/import" \
   -H "Authorization: Bearer $TOKEN" \
@@ -43,7 +45,7 @@ curl -s -X POST "https://ghostfol.io/api/v1/import" \
   -d '{
     "activities": [{
       "accountId": "<accountId>",
-      "currency": "GBP",
+      "currency": "<match account currency>",
       "dataSource": "MANUAL",
       "date": "2026-01-01T00:00:00.000Z",
       "fee": 0,
@@ -62,6 +64,22 @@ curl -s -X POST "https://ghostfol.io/api/v1/import" \
 
 > **Note on INTEREST activities**: The interest amount = `unitPrice * quantity`. Typically `quantity: 1` and `unitPrice: <amount>`.
 
+### Update account balance
+```bash
+curl -s -X PUT "https://ghostfol.io/api/v1/account/<accountId>" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "<accountId>",
+    "balance": 1234.56,
+    "currency": "<account currency>",
+    "isExcluded": false,
+    "name": "<account name>",
+    "platformId": "<platformId>"
+  }'
+```
+The account balance is a single current value (not historical). Always include all fields — it's a full replace.
+
 ### Update activity (PUT — replaces all fields)
 ```bash
 curl -s -X PUT "https://ghostfol.io/api/v1/order/<id>" \
@@ -70,7 +88,7 @@ curl -s -X PUT "https://ghostfol.io/api/v1/order/<id>" \
   -d '{
     "id": "<id>",
     "accountId": "<accountId>",
-    "currency": "GBP",
+    "currency": "<match account currency>",
     "dataSource": "MANUAL",
     "date": "...",
     "fee": 0,
