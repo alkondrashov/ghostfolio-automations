@@ -18,7 +18,7 @@ jobs:
       - name: Authenticate with Ghostfolio
         id: auth
         run: |
-          TOKEN=$(curl -s -X POST "${{ secrets.GHOSTFOLIO_URL }}/api/v1/auth/anonymous" \
+          TOKEN=$(curl -s -X POST "https://ghostfol.io/api/v1/auth/anonymous" \
             -H "Content-Type: application/json" \
             -d '{"accessToken": "${{ secrets.GHOSTFOLIO_ACCESS_TOKEN }}"}' \
             | jq -r '.authToken')
@@ -26,7 +26,7 @@ jobs:
 
       - name: Post interest activity
         run: |
-          curl -s -X POST "${{ secrets.GHOSTFOLIO_URL }}/api/v1/import" \
+          curl -s -X POST "https://ghostfol.io/api/v1/import" \
             -H "Authorization: Bearer ${{ steps.auth.outputs.TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{
