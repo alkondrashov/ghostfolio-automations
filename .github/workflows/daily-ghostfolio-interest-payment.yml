@@ -40,6 +40,7 @@ jobs:
                   "symbol": "INTEREST",
                   "type": "INTEREST",
                   "unitPrice": 1.00,
+                  "accountId": "13993c80-84eb-4d6d-b42f-778410f5d92d",
                   "comment": "Daily interest payment"
                 }
               ]
