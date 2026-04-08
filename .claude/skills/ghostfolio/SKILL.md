@@ -28,7 +28,7 @@ The access token is read from the `GHOSTFOLIO_ACCESS_TOKEN` environment variable
   - Interest activity name: `"Interest paid"`
 - **Loyalty ISA Premiere (3.00% AER)** (Investec ISA savings): `f1fcdf83-5add-4475-a71e-47e29e52fcc8` — currency: GBP, platformId: `872059aa-5f4d-4dd6-8c30-4fb92e157aee`
   - Interest activity name: `"GROSS INTEREST"`
-- **Premier Save** (Investec savings): `9db3549e-3e04-4a32-97c9-30cc81ce94e4` — currency: GBP, platformId: `872059aa-5f4d-4dd6-8c30-4fb92e157aee`
+- **Premier Save (1.10% AER)** (Investec savings): `9db3549e-3e04-4a32-97c9-30cc81ce94e4` — currency: GBP, platformId: `872059aa-5f4d-4dd6-8c30-4fb92e157aee`
   - Interest activity name: `"GROSS INTEREST"`
 
 ## Key Endpoints
