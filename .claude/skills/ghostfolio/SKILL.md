@@ -24,7 +24,12 @@ The access token is read from the `GHOSTFOLIO_ACCESS_TOKEN` environment variable
 ## Known Accounts
 
 - **Vanguard Stocks & Shares ISA**: `be08db84-cbaf-4e99-ac40-87ce96992ec7`
-- **Cash Revolut** (Investec savings, used for interest payments): `13993c80-84eb-4d6d-b42f-778410f5d92d` — currency: USD
+- **Cash Revolut** (Investec Instant Access savings): `13993c80-84eb-4d6d-b42f-778410f5d92d` — currency: USD, platformId: `747b9016-8ba1-4d13-8255-aec49a468ead`
+  - Interest activity name: `"Interest paid"`
+- **Loyalty ISA Premiere (3.00% AER)** (Investec ISA savings): `f1fcdf83-5add-4475-a71e-47e29e52fcc8` — currency: GBP, platformId: `872059aa-5f4d-4dd6-8c30-4fb92e157aee`
+  - Interest activity name: `"GROSS INTEREST"`
+- **Premier Save** (Investec savings): `9db3549e-3e04-4a32-97c9-30cc81ce94e4` — currency: GBP, platformId: `872059aa-5f4d-4dd6-8c30-4fb92e157aee`
+  - Interest activity name: `"GROSS INTEREST"`
 
 ## Key Endpoints
 
@@ -112,6 +117,21 @@ The PUT endpoint does not update the symbol/name. To rename:
 1. Note all fields from the existing activity
 2. DELETE it
 3. POST to `/api/v1/import` with the new `symbol` value
+
+## Recording Interest Activities
+
+When the user provides a bank statement with interest and deposit transactions:
+
+1. **Calculate two totals** from the statement: total deposits and total interest earned
+2. **Fetch the account** to get current balance and platformId
+3. **Create the INTEREST activity**:
+   - `symbol`: use the account's interest activity name (see Known Accounts above — e.g. `"GROSS INTEREST"` for HSBC accounts, `"Interest paid"` for Cash Revolut)
+   - `quantity`: 1, `unitPrice`: <interest total>
+   - `date`: last interest date from the statement
+   - `comment`: e.g. `"Total gross interest earned Mar 2024 – Mar 2026"`
+4. **Update the account balance** to: current balance + interest amount
+5. **Update the account note** (`comment` field on the account) to: `"Last updated DD Mon YYYY – interest recorded to Mon YYYY"`
+6. Always confirm all steps succeeded
 
 ## Workflow Guidelines
 
