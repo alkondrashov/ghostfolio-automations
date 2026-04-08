@@ -24,7 +24,7 @@ The access token is read from the `GHOSTFOLIO_ACCESS_TOKEN` environment variable
 ## Known Accounts
 
 - **Vanguard Stocks & Shares ISA**: `be08db84-cbaf-4e99-ac40-87ce96992ec7`
-- **Cash Revolut** (Investec Instant Access savings): `13993c80-84eb-4d6d-b42f-778410f5d92d` — currency: USD, platformId: `747b9016-8ba1-4d13-8255-aec49a468ead`
+- **Cash Revolut (1.23% AER)** (Investec Instant Access savings): `13993c80-84eb-4d6d-b42f-778410f5d92d` — currency: USD, platformId: `747b9016-8ba1-4d13-8255-aec49a468ead`
   - Interest activity name: `"Interest paid"`
 - **Loyalty ISA Premiere (3.00% AER)** (Investec ISA savings): `f1fcdf83-5add-4475-a71e-47e29e52fcc8` — currency: GBP, platformId: `872059aa-5f4d-4dd6-8c30-4fb92e157aee`
   - Interest activity name: `"GROSS INTEREST"`
